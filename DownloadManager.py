@@ -50,10 +50,17 @@ class FileManager:
 
                 else:
                     os.chdir(self.destination)
-                    os.mkdir(destination_folder[key])
+                    try:            #Trying to make the directory
+                        os.mkdir(destination_folder[key])
+                    except FileExistsError:     # exception if the file is exist but the name is mismatch (ex: pPt instead of PPT or ppt)
+                        for folder in os.listdir(self.destination):
+                            if folder.upper() == destination_folder[key].upper() :
+                                break
+                        os.rename(folder , destination_folder[key])
                     os.chdir(os.path.join(self.destination, destination_folder[key]))
                     self.destination = os.path.join(self.destination, destination_folder[key])
                     self.search_file()
+
 
     def search_file(self):
         for fl in os.listdir(self.source):
